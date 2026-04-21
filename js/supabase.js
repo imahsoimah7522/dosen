@@ -7,7 +7,7 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
 // ── INSTALLED CONFIG (auto-written by installer — do not edit manually) ──
-const INSTALLED_CONFIG = {"url":"","anon_key":"","service_key":""};
+const INSTALLED_CONFIG = {"https://bvjucnttwxaoqwrsllvk.supabase.co":"","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ2anVjbnR0d3hhb3F3cnNsbHZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3NjI2MzEsImV4cCI6MjA5MjMzODYzMX0.mJBDk7D895PPe7izWaiifTVC1UydLuCpknIPwmlruho":"","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ2anVjbnR0d3hhb3F3cnNsbHZrIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3Njc2MjYzMSwiZXhwIjoyMDkyMzM4NjMxfQ.zhq5GqeeO46DmW4ymwvy5RWejBYfcvZoU6XFg0w_cXs":""};
 // ── END INSTALLED CONFIG ──
 
 // Read config from localStorage (set by the CMS installer)
