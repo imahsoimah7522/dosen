@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Login — CMS</title>
+    <meta name="admin-page-name" content="Login" />
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="icon" href="../logo/icon.ico" type="image/x-icon" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="../css/admin.css" />
+    <style>
+        .login-info-box {
+            background: #EFF6FF;
+            border: 1px solid #BFDBFE;
+            border-radius: .6rem;
+            padding: .85rem 1rem;
+            margin-bottom: 1.25rem;
+            font-size: .8rem;
+            color: #1E40AF;
+            line-height: 1.6;
+        }
+
+        .login-info-box strong {
+            display: block;
+            margin-bottom: .3rem;
+            color: #1D4ED8;
+        }
+
+        .login-info-box code {
+            background: #DBEAFE;
+            border-radius: 3px;
+            padding: 1px 5px;
+            font-family: monospace;
+            font-size: .78rem;
+        }
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        .toggle-pw {
+            position: absolute;
+            right: .75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--color-text-muted);
+            font-size: .9rem;
+            line-height: 1;
+        }
+
+        .forgot-link {
+            display: block;
+            text-align: right;
+            font-size: .82rem;
+            margin-top: .4rem;
+            color: var(--color-primary);
+            cursor: pointer;
+            transition: color .2s;
+        }
+
+        .forgot-link:hover {
+            color: #1D4ED8;
+            text-decoration: underline;
+        }
+
+        /* Forgot Password Modal */
+        .forgot-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, .6);
+            backdrop-filter: blur(6px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            opacity: 0;
+            visibility: hidden;
+            transition: all .3s cubic-bezier(.4, 0, .2, 1);
+        }
+
+        .forgot-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .forgot-card {
+            background: #fff;
+            border-radius: 1.5rem;
+            padding: 2rem;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, .3);
+            transform: scale(.95) translateY(-10px);
+            transition: all .3s cubic-bezier(.4, 0, .2, 1);
+        }
+
+        .forgot-overlay.open .forgot-card {
+            transform: scale(1) translateY(0);
+        }
+
+        .forgot-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .forgot-header .forgot-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #2563EB, #06B6D4);
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto .75rem;
+            font-size: 1.6rem;
+        }
+
+        .forgot-header h2 {
+            font-family: var(--font-heading);
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1E293B;
+            margin-bottom: .25rem;
+        }
+
+        .forgot-header p {
+            font-size: .85rem;
+            color: #64748B;
+            line-height: 1.5;
+        }
+
+        .forgot-success {
+            background: #F0FDF4;
+            border: 1px solid #BBF7D0;
+            border-radius: .75rem;
+            padding: 1rem;
+            text-align: center;
+            display: none;
+        }
+
+        .forgot-success.show {
+            display: block;
+        }
+
+        .forgot-success .success-icon {
+            font-size: 2rem;
+            margin-bottom: .5rem;
+        }
+
+        .forgot-success h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #166534;
+            margin-bottom: .25rem;
+        }
+
+        .forgot-success p {
+            font-size: .82rem;
+            color: #15803D;
+            line-height: 1.5;
+        }
+
+        .forgot-error {
+            background: #FEE2E2;
+            color: #991B1B;
+            border-radius: .6rem;
+            padding: .65rem .85rem;
+            font-size: .82rem;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .forgot-error.show {
+            display: block;
+        }
+
+        .forgot-actions {
+            display: flex;
+            gap: .75rem;
+            margin-top: 1.25rem;
+        }
+
+        .forgot-actions .btn {
+            flex: 1;
+            justify-content: center;
+        }
+
+        .btn-ghost {
+            background: none;
+            border: 1.5px solid #E2E8F0;
+            color: #64748B;
+            padding: .6rem 1.25rem;
+            border-radius: 9999px;
+            font-family: var(--font-heading);
+            font-weight: 500;
+            font-size: .85rem;
+            cursor: pointer;
+            transition: all .25s;
+        }
+
+        .btn-ghost:hover {
+            border-color: #CBD5E1;
+            color: #1E293B;
+        }
+    </style>
+</head>
+
+<body>
+    <main class="login-page" role="main">
+        <div class="login-card">
+
+            <!-- Logo -->
+            <div class="login-logo">
+                <img src="../logo/logo.png" alt="Dosenova" style="height:48px;width:auto;margin-bottom:.5rem;" />
+                <h1>Admin CMS</h1>
+                <p id="login-brand-title">Portfolio</p>
+            </div>
+
+
+
+
+            <!-- Error box -->
+            <div class="login-error" id="login-error" role="alert"></div>
+
+            <!-- Login form -->
+            <form id="login-form" novalidate aria-label="Admin login form">
+                <div class="form-group">
+                    <label for="login-email">Email Address</label>
+                    <input type="email" id="login-email" placeholder="Enter your email address" required
+                        autocomplete="email" />
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="login-password" placeholder="••••••••" required
+                            autocomplete="current-password" />
+                        <button type="button" class="toggle-pw" id="toggle-pw"
+                            aria-label="Show/hide password">👁</button>
+                    </div>
+                </div>
+                <a class="forgot-link" id="forgot-link">Lupa password?</a>
+                <button type="submit" class="btn btn-primary" id="login-btn"
+                    style="width:100%;justify-content:center;margin-top:.5rem;">
+                    Sign In
+                </button>
+            </form>
+
+            <p style="text-align:center;margin-top:1.5rem;font-size:.82rem;color:var(--color-text-muted);">
+                <a href="../index.html" style="color:var(--color-primary);">← Back to website</a>
+            </p>
+        </div>
+
+        <!-- Forgot Password Modal -->
+        <div class="forgot-overlay" id="forgot-overlay">
+            <div class="forgot-card">
+                <div class="forgot-header">
+                    <div class="forgot-icon">🔑</div>
+                    <h2>Reset Password</h2>
+                    <p id="forgot-desc">Masukkan email yang terdaftar di akun admin Anda untuk mereset password.</p>
+                </div>
+
+                <div class="forgot-error" id="forgot-error" role="alert"></div>
+
+                <div class="forgot-success" id="forgot-success">
+                    <div class="success-icon">📧</div>
+                    <h3>Link Reset Terkirim!</h3>
+                    <p id="forgot-success-msg">Kami telah mengirim link reset password ke email Anda. Silakan cek inbox (dan folder spam) untuk melanjutkan.</p>
+                </div>
+
+                <!-- Verify Email & Send Reset Link -->
+                <form id="forgot-form-step1" novalidate>
+                    <div class="form-group">
+                        <label for="forgot-email">Email Address</label>
+                        <input type="email" id="forgot-email" placeholder="Masukkan email terdaftar" required autocomplete="email" />
+                    </div>
+                    <div class="forgot-actions">
+                        <button type="button" class="btn btn-ghost" id="forgot-cancel">Batal</button>
+                        <button type="submit" class="btn btn-primary" id="forgot-btn-verify">Kirim Link Reset</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script type="module">
+        import { supabase, supabaseAdmin } from '../js/supabase.js';
+        import { adminUrl, loadSidebarBrand } from './admin.js';
+
+        // ── Save secret key from URL (no RPC verification on login page) ──
+        const urlKey = new URLSearchParams(window.location.search).get('key');
+        if (urlKey) {
+            sessionStorage.setItem('admin_key', urlKey);
+        } else if (!sessionStorage.getItem('admin_key')) {
+            // No key at all — redirect to public site
+            window.location.href = '../index.html';
+        }
+
+        try { await loadSidebarBrand(); } catch(_) {}
+
+        // ── Show/hide password toggle ────────────────────────────────
+        document.getElementById('toggle-pw').addEventListener('click', () => {
+            const pw = document.getElementById('login-password');
+            pw.type = pw.type === 'password' ? 'text' : 'password';
+        });
+
+        // ── Redirect if already logged in (custom session) ─────────
+        const existing = sessionStorage.getItem('admin_session');
+        if (existing) {
+            try {
+                const s = JSON.parse(existing);
+                if (s?.id) { window.location.href = adminUrl('dashboard.html'); }
+            } catch { sessionStorage.removeItem('admin_session'); }
+        }
+
+        // ── Login form submit ───────────────────────────────────────
+        const form = document.getElementById('login-form');
+        const errorEl = document.getElementById('login-error');
+        const loginBtn = document.getElementById('login-btn');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            errorEl.classList.remove('show');
+            loginBtn.disabled = true;
+            loginBtn.textContent = 'Signing in…';
+
+            const email = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-password').value;
+
+            if (!email || !password) {
+                showError('Please enter your email and password.');
+                return;
+            }
+
+            try {
+                // Step 1: Verify credentials & ensure Supabase Auth user exists
+                const { data: authData, error: rpcError } = await supabase
+                    .rpc('admin_login_auth', { in_email: email, in_password: password });
+
+                if (rpcError) {
+                    // Fallback to legacy admin_login if new RPC not yet installed
+                    console.warn('admin_login_auth failed, trying legacy:', rpcError.message);
+                    const { data: legacyData, error: legacyError } = await supabase
+                        .rpc('admin_login', { in_email: email, in_password: password });
+
+                    if (legacyError || !legacyData || legacyData.length === 0) {
+                        showError('Invalid email or password.');
+                        return;
+                    }
+
+                    sessionStorage.setItem('admin_session', JSON.stringify({
+                        id: legacyData[0].id, email: legacyData[0].email,
+                        display_name: legacyData[0].display_name,
+                        role: legacyData[0].role, avatar_url: legacyData[0].avatar_url || null,
+                        login_at: new Date().toISOString(),
+                    }));
+                    window.location.href = adminUrl('dashboard.html');
+                    return;
+                }
+
+                if (authData?.error) {
+                    showError(authData.error);
+                    return;
+                }
+
+                // Step 2: Sign in via Supabase Auth to get authenticated session
+                // Retry up to 3 times with delay — the auth user may need a moment to be ready
+                let signInSuccess = false;
+                let lastSignInError = null;
+                for (let attempt = 1; attempt <= 3; attempt++) {
+                    if (attempt > 1) {
+                        await new Promise(r => setTimeout(r, 500 * attempt));
+                    }
+                    const { error: signInError } = await supabase.auth.signInWithPassword({
+                        email, password
+                    });
+                    if (!signInError) {
+                        signInSuccess = true;
+                        break;
+                    }
+                    lastSignInError = signInError;
+                    console.warn(`signInWithPassword attempt ${attempt}/3 failed:`, signInError.message);
+                }
+
+                if (!signInSuccess) {
+                    console.warn('All signInWithPassword attempts failed. Using session-only fallback.');
+                    console.warn('Tip: Disable "Confirm email" in Supabase Auth settings for reliable login.');
+                    // Continue with RPC session data
+                }
+
+                // Step 3: Store admin session info
+                sessionStorage.setItem('admin_session', JSON.stringify({
+                    id: authData.id, email: authData.email,
+                    display_name: authData.display_name,
+                    role: authData.role, avatar_url: authData.avatar_url || null,
+                    login_at: new Date().toISOString(),
+                }));
+
+                window.location.href = adminUrl('dashboard.html');
+
+            } catch (err) {
+                showError('Unexpected error: ' + (err.message || 'Please try again.'));
+            }
+        });
+
+        function showError(msg) {
+            errorEl.textContent = msg;
+            errorEl.classList.add('show');
+            loginBtn.disabled = false;
+            loginBtn.textContent = 'Sign In';
+        }
+
+        // ── Forgot Password (Secure Email-based Reset) ──────────
+        const forgotOverlay = document.getElementById('forgot-overlay');
+        const forgotStep1 = document.getElementById('forgot-form-step1');
+        const forgotError = document.getElementById('forgot-error');
+        const forgotSuccess = document.getElementById('forgot-success');
+
+        function resetForgotModal() {
+            forgotError.classList.remove('show');
+            forgotSuccess.classList.remove('show');
+            forgotStep1.style.display = '';
+            document.getElementById('forgot-desc').textContent =
+                'Masukkan email yang terdaftar di akun admin Anda. Kami akan mengirim link reset password ke email tersebut.';
+        }
+
+        // Open modal
+        document.getElementById('forgot-link').addEventListener('click', () => {
+            forgotOverlay.classList.add('open');
+            resetForgotModal();
+            document.getElementById('forgot-email').value = document.getElementById('login-email').value || '';
+            setTimeout(() => document.getElementById('forgot-email').focus(), 300);
+        });
+
+        // Close modal
+        document.getElementById('forgot-cancel').addEventListener('click', () => {
+            forgotOverlay.classList.remove('open');
+        });
+        forgotOverlay.addEventListener('click', (e) => {
+            if (e.target === forgotOverlay) forgotOverlay.classList.remove('open');
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') forgotOverlay.classList.remove('open');
+        });
+
+        function showForgotError(msg) {
+            forgotError.textContent = msg;
+            forgotError.classList.add('show');
+        }
+
+        // Verify email & send reset link via Supabase Auth SMTP
+        forgotStep1.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            forgotError.classList.remove('show');
+
+            const email = document.getElementById('forgot-email').value.trim();
+            if (!email) { showForgotError('Masukkan alamat email Anda.'); return; }
+
+            const btnVerify = document.getElementById('forgot-btn-verify');
+            btnVerify.disabled = true;
+            btnVerify.textContent = 'Mengirim…';
+
+            try {
+                // Step 1: Verify email exists in admin_users
+                const { data: emailExists, error: checkErr } = await supabase
+                    .rpc('admin_check_email', { in_email: email });
+
+                if (checkErr) {
+                    showForgotError('Gagal memverifikasi: ' + checkErr.message);
+                    btnVerify.disabled = false;
+                    btnVerify.textContent = 'Kirim Link Reset';
+                    return;
+                }
+
+                if (emailExists === false) {
+                    showForgotError('Email tidak ditemukan. Pastikan email yang Anda masukkan sudah terdaftar.');
+                    btnVerify.disabled = false;
+                    btnVerify.textContent = 'Kirim Link Reset';
+                    return;
+                }
+
+                // Step 2: Ensure auth.users entry exists via Auth Admin API
+                const { error: createErr } = await supabaseAdmin.auth.admin.createUser({
+                    email: email,
+                    email_confirm: true,
+                    password: crypto.randomUUID(),
+                });
+                if (createErr && !createErr.message.includes('already') && !createErr.message.includes('exists')) {
+                    showForgotError('Gagal membuat akun auth: ' + createErr.message);
+                    btnVerify.disabled = false;
+                    btnVerify.textContent = 'Kirim Link Reset';
+                    return;
+                }
+
+                // Step 3: Send reset password email via SMTP
+                const resetRedirectUrl = window.location.origin +
+                    window.location.pathname.replace('login.html', 'reset-password.html');
+
+                const { error: resetErr } = await supabase.auth.resetPasswordForEmail(email, {
+                    redirectTo: resetRedirectUrl,
+                });
+
+                if (resetErr) {
+                    // Handle rate limit (429 Too Many Requests)
+                    if (resetErr.status === 429 || resetErr.message?.toLowerCase().includes('rate') ||
+                        resetErr.message?.toLowerCase().includes('too many')) {
+                        showForgotError('Terlalu banyak percobaan. Silakan tunggu 60 detik sebelum mencoba lagi.');
+                    } else if (resetErr.message?.toLowerCase().includes('smtp') ||
+                               resetErr.message?.toLowerCase().includes('mail') ||
+                               resetErr.message?.toLowerCase().includes('email')) {
+                        showForgotError('SMTP belum dikonfigurasi di Supabase. Buka Supabase Dashboard → Authentication → SMTP Settings untuk mengatur pengiriman email.');
+                    } else {
+                        showForgotError('Gagal mengirim email reset: ' + resetErr.message);
+                    }
+                    btnVerify.disabled = false;
+                    btnVerify.textContent = 'Kirim Link Reset';
+                    return;
+                }
+
+                // Step 4: Show success — email sent via SMTP
+                forgotStep1.style.display = 'none';
+                document.getElementById('forgot-desc').textContent = '';
+                forgotSuccess.classList.add('show');
+                document.getElementById('forgot-success-msg').textContent =
+                    `Link reset password telah dikirim ke ${email}. Silakan cek inbox (dan folder spam) Anda.`;
+
+                btnVerify.disabled = false;
+                btnVerify.textContent = 'Kirim Link Reset';
+
+            } catch (err) {
+                showForgotError('Terjadi kesalahan: ' + (err.message || 'Coba lagi.'));
+                btnVerify.disabled = false;
+                btnVerify.textContent = 'Kirim Link Reset';
+            }
+        });
+    </script>
+</body>
+
+</html>
